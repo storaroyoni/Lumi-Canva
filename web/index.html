@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lumi Canva · LED Matrix Controller</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['Space Grotesk', 'system-ui'],
+            },
+            colors: {
+              brand: {
+                50: '#eff6ff',
+                200: '#bae6fd',
+                400: '#38bdf8',
+                500: '#0ea5e9',
+                700: '#0369a1',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="h-full font-display">
+    <div class="min-h-full py-10">
+      <main class="mx-auto flex max-w-6xl flex-col gap-6 px-4">
+        <header class="flex flex-col gap-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg ring-1 ring-white/5 backdrop-blur">
+          <div>
+            <p class="text-xs uppercase tracking-[0.4em] text-brand-200">Lumi Canva</p>
+            <h1 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">ESP32 LED Matrix Controller</h1>
+            <p class="mt-2 text-sm text-slate-300">Draw pixel art in real time, push frames to your WS2812B panel, and manage presets from any phone or laptop.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <label class="flex flex-col text-xs uppercase tracking-wide text-slate-300">
+              Device host / IP
+              <input id="hostInput" type="text" placeholder="192.168.4.1" class="mt-1 w-56 rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2 text-base text-white placeholder:text-slate-500 focus:border-brand-400 focus:ring-brand-400" />
+            </label>
+            <button id="connectBtn" class="rounded-full bg-brand-400 px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400">Connect</button>
+            <span id="connectionStatus" class="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-sm text-slate-300">
+              <span class="size-2 rounded-full bg-slate-500"></span>
+              Disconnected
+            </span>
+          </div>
+        </header>
+
+        <section class="grid gap-4 rounded-3xl border border-white/5 bg-white/5 p-4 backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs uppercase text-slate-400">Matrix size</label>
+            <select id="matrixSize" class="rounded-2xl border border-white/10 bg-slate-900/60 px-3 py-2">
+              <option value="8">8 × 8</option>
+              <option value="16" selected>16 × 16</option>
+              <option value="24">24 × 24</option>
+              <option value="32">32 × 32</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs uppercase text-slate-400">Color</label>
+            <input id="colorPicker" type="color" value="#ff6b6b" class="h-10 w-full rounded-2xl border border-white/10 bg-slate-900/60" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs uppercase text-slate-400">Background</label>
+            <input id="bgColorPicker" type="color" value="#030712" class="h-10 w-full rounded-2xl border border-white/10 bg-slate-900/60" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs uppercase text-slate-400">Brush size</label>
+            <input id="brushSize" type="range" min="1" max="4" value="1" class="accent-brand-400" />
+            <span id="brushSizeValue" class="text-sm text-slate-300">1 px</span>
+          </div>
+          <div class="flex flex-col gap-2 sm:col-span-2">
+            <label class="text-xs uppercase text-slate-400">Mode</label>
+            <div class="flex gap-2">
+              <button data-mode="draw" class="mode-chip active">Draw</button>
+              <button data-mode="erase" class="mode-chip">Erase</button>
+              <button data-mode="fill" class="mode-chip">Fill</button>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase text-slate-400">Actions</label>
+            <div class="flex flex-wrap gap-2">
+              <button id="undoBtn" class="ghost-chip">Undo</button>
+              <button id="clearBtn" class="ghost-chip">Clear</button>
+              <button id="gridBtn" class="ghost-chip">Grid</button>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs uppercase text-slate-400">Brightness</label>
+            <input id="brightness" type="range" min="1" max="255" value="128" class="accent-brand-400" />
+            <span id="brightnessValue" class="text-sm text-slate-300">50%</span>
+          </div>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-[3fr_1fr]">
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-4 text-center shadow-xl">
+            <div class="mx-auto max-w-[640px]">
+              <canvas id="matrixCanvas" width="640" height="640" class="mx-auto aspect-square w-full rounded-2xl bg-slate-900 shadow-inner"></canvas>
+            </div>
+          </div>
+          <aside class="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-4">
+            <header class="flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-semibold text-white">Presets</h2>
+                <p class="text-sm text-slate-400">Stored in this browser</p>
+              </div>
+              <button id="savePresetBtn" class="rounded-full bg-brand-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-brand-500">Save current</button>
+            </header>
+            <ul id="presetList" class="flex flex-col gap-3 text-sm"></ul>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <template id="presetItemTemplate">
+      <li class="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-900/50 px-3 py-2">
+        <button class="preset__load flex-1 text-left font-medium text-slate-200"></button>
+        <button class="preset__delete text-lg font-semibold text-rose-400">×</button>
+      </li>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

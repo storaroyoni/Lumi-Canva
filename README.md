@@ -52,8 +52,28 @@ Lumi Canva is an interactive LED pixel-art canvas powered by ESP32 and WS2812B L
    - Add color palette, save/load/clear buttons  
    - Implement responsive layout for mobile and desktop  
 
-
 4. **Testing & Debugging**  
    - Verify real-time rendering  
    - Test preset save/load functionality  
+
+---
+
+## Web App (Tailwind + Vanilla JS)
+
+The `web` directory contains a lightweight Tailwind-powered frontend that can be flashed onto the ESP32 SPIFFS/LittleFS partition or hosted from any static server.
+
+```
+web/
+├── index.html  # Tailwind UI scaffold loaded via CDN
+├── style.css   # Small helper styles for custom chips
+└── app.js      # Canvas drawing logic, presets, networking
+```
+
+### Running locally
+
+1. Open `web/index.html` directly in a modern browser **or** serve the folder with any static server (e.g. `python -m http.server 8080`).
+2. Enter the ESP32 host/IP (default `http://192.168.4.1`) and press **Connect**. The UI attempts a WebSocket connection at `/ws` and falls back to `POST /frame` for frame pushes.
+3. Draw on the canvas, tweak brightness, and store presets (saved in `localStorage` for the current browser).
+
+> Because Tailwind is loaded via the CDN Play build, no additional tooling or compilation is required.
 
