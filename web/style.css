@@ -15,9 +15,9 @@
 }
 
 .mode-chip.active {
-  background: #38bdf8;
+  background: #5838f8;
   color: #0f172a;
-  border-color: #38bdf8;
+  border-color: #5838f8;
 }
 
 .mode-chip:not(.active):hover,
