@@ -6,7 +6,7 @@ Lumi Canva is an interactive LED pixel-art canvas powered by ESP32 and WS2812B L
 
 ## Features
 
-- Real-time pixel drawing on a 16×16 LED matrix  
+- Real-time pixel drawing on a 16×32 LED matrix  
 - Web-based and mobile-friendly interface  
 - Save, load, and clear artwork presets  
 - Adjustable brightness control  
