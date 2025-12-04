@@ -1,0 +1,31 @@
+:root {
+  color-scheme: dark;
+}
+
+.mode-chip,
+.ghost-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.4rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.5);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.mode-chip.active {
+  background: #5838f8;
+  color: #0f172a;
+  border-color: #5838f8;
+}
+
+.mode-chip:not(.active):hover,
+.ghost-chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.preset__delete {
+  line-height: 1;
+}
